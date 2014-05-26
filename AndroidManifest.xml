@@ -4,7 +4,7 @@
     android:versionCode="5"
     android:versionName="0.3" >
 
-    <uses-sdk android:minSdkVersion="10" />
+    <uses-sdk android:minSdkVersion="14" />
     <uses-permission android:name="android.permission.NFC"/>
     <uses-feature android:required="true" android:name="android.hardware.nfc"/>
     <uses-feature android:required="false" android:name="android.hardware.touchscreen"/>

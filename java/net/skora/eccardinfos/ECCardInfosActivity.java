@@ -142,7 +142,26 @@ public class ECCardInfosActivity extends Activity {
             toastError("failed at connect!");
 			return;
 		}
-		
+
+        try {
+            cardtype.setText(tagcomm.getAtqa().toString());
+        } catch (Exception e) {
+            toastError("Fail getting atqa");
+            toastError((e.getMessage() != null ? e.getMessage() : "-"));
+        }
+        try {
+            blz.setText(tagcomm.getSak());
+        } catch (Exception e) {
+            toastError("Fail getting sak");
+            toastError((e.getMessage() != null ? e.getMessage() : "-"));
+        }
+        try {
+            kartennr.setText(tagcomm.getTimeout());
+        } catch (Exception e) {
+            toastError("Fail getting timeout");
+            toastError((e.getMessage() != null ? e.getMessage() : "-"));
+        }
+
 		try {
 			// Switch to DF_BOERSE
 			byte[] recv = transceive("00 A4 04 0C 09 D2 76 00 00 25 45 50 02 00");
