@@ -46,7 +46,7 @@ public class ECCardInfosActivity extends Activity {
 	
 	private NfcAdapter nfc;
 	private Tag tag;
-	private IsoDep tagcomm;
+	private NfcA tagcomm;
 	private String[][] nfctechfilter = new String[][] { new String[] { NfcA.class.getName() } };
 	private PendingIntent nfcintent;
 	
@@ -104,8 +104,16 @@ public class ECCardInfosActivity extends Activity {
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
 		tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-		log("Tag detected!");
-		
+        if (tag == null) {
+            toastError("tag is null :/");
+        } else {
+            toastError("new tag = "+tag.toString());
+        }
+        //toastError("nfcAdapter: "+NfcAdapter.EXTRA_TAG);
+
+        log("Tag detected!");
+        toastError("Tag detected!");
+
 		nfcid.setText("-");
 		cardtype.setText("-");
 		blz.setText("-");
@@ -121,8 +129,9 @@ public class ECCardInfosActivity extends Activity {
 		byte[] id = tag.getId();
 		nfcid.setText(SharedUtils.Byte2Hex(id));
 		
-		tagcomm = IsoDep.get(tag);
+		tagcomm = NfcA.get(tag);
 		if (tagcomm == null) {
+            toastError("tagcomm is null!");
 			toastError(getResources().getText(R.string.error_nfc_comm));
 			return;
 		}
@@ -130,12 +139,19 @@ public class ECCardInfosActivity extends Activity {
 			tagcomm.connect();
 		} catch (IOException e) {
 			toastError(getResources().getText(R.string.error_nfc_comm_cont) + (e.getMessage() != null ? e.getMessage() : "-"));
+            toastError("failed at connect!");
 			return;
 		}
 		
 		try {
 			// Switch to DF_BOERSE
 			byte[] recv = transceive("00 A4 04 0C 09 D2 76 00 00 25 45 50 02 00");
+            toastError("First transceive worked!");
+            if (recv == null) {
+                toastError("recv was null!");
+            } else {
+                toastError("Recv: "+recv.toString());
+            }
 			if (recv.length >= 2 && recv[0] == (byte) 0x90 && recv[1] == 0) {
 				cardtype.setText("GeldKarte");
 				readGeldKarte();
@@ -173,6 +189,7 @@ public class ECCardInfosActivity extends Activity {
 			tagcomm.close();
 		} catch (IOException e) {
 			toastError(getResources().getText(R.string.error_nfc_comm_cont) + (e.getMessage() != null ? e.getMessage() : "-"));
+            toastError("failed at read!");
 		}
 	}
 	
